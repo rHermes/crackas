@@ -55,8 +55,6 @@ constexpr uint16_t F_inv(uint8_t z) {
     return f_table[z];
 }
 
-
-
 // This is just to make sure the pre_gen() fills entire keyspace.
 constexpr bool all_ok() {
 	for (int i = 0; i < 256; i++) {
@@ -70,6 +68,7 @@ constexpr bool all_ok() {
 static_assert(all_ok(), "We are not filling the entire keyspace!");
 
 
+// Convert a ascii to it's string representation.
 std::string ascii_to_hex(std::string_view ascii) {
 	std::string hex;
 	hex.reserve(ascii.size()*2);
@@ -91,15 +90,14 @@ std::string generate_license(std::string_view name) {
 
 
 	std::string hex_name = ascii_to_hex(name);
-
 	mpz_class num_name{hex_name, 16};
 
 	mpz_class decrypted;
 	mpz_powm(decrypted.get_mpz_t(), num_name.get_mpz_t(), D.get_mpz_t(), N.get_mpz_t());
 
-	// gmp_printf("Decrypted name: %Zx\n", decrypted.get_mpz_t());
 
 	std::string post_f = decrypted.get_str(16);
+	// We need an even balanced string where we are going.
 	if (post_f.size() % 2 == 1) {
 		post_f = "0" + post_f;
 	}
@@ -114,27 +112,18 @@ std::string generate_license(std::string_view name) {
 		serial[i] = a;
 		serial[i+1] = b;
 	}
-
-
-	// We must create our ascii name.
-
 	return serial;
 }
 
+// ACtivation is always 23479-81214-94578-61954
 int main(int argc, char** argv) {
-	// TODO(rHermes): Take name from argv.
-	
+	// The serial is 
 	if (argc != 2) {
 		printf("Usage: %s <name>\n", argv[0]);
 		return 1;
 	}
-	// const char* name = "mihika-is-my-love<3";
-	// const char* name = "mihika";
-	// const char* name = "mats elsker crypto";
 	std::string serial = generate_license(argv[1]);
-
 	printf("%s\n", serial.c_str());
-
 
 	return 0;
 }
