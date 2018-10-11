@@ -8,18 +8,18 @@
 
 // This is the crypto function they used.
 constexpr uint8_t F(uint8_t x, uint8_t y) noexcept {
-    uint8_t z = 0;
-    if (x >= ':') {
-        z = (x - '7') << 4;
-    } else {
-        z = (x - '0') << 4;
-    }
+	uint8_t z = 0;
+	if (x >= ':') {
+		z = (x - '7') << 4;
+	} else {
+		z = (x - '0') << 4;
+	}
 
-    if (y >= ':') {
-        return z | ((y - '7') & 0x0F);
-    } else {
-        return z | (y - '0');
-    }
+	if (y >= ':') {
+		return z | ((y - '7') & 0x0F);
+	} else {
+		return z | (y - '0');
+	}
 }
 
 constexpr uint16_t pair_merge(const uint8_t a, const uint8_t b) {
@@ -35,16 +35,16 @@ constexpr std::pair<uint8_t,uint8_t> pair_split(const uint16_t c) {
 constexpr std::array<uint16_t, 256> pre_gen() noexcept {
 	std::array<uint16_t, 256> T = {};
 
-    for (uint8_t i = 'A'; i <= 'Z'; i++) {
-        for (uint8_t j = 'A'; j <= 'Z'; j++) {
-            uint8_t z = F(i,j);
+	for (uint8_t i = 'A'; i <= 'Z'; i++) {
+		for (uint8_t j = 'A'; j <= 'Z'; j++) {
+			uint8_t z = F(i,j);
 			if (T[z] == 0) {
 				T[z] = pair_merge(i, j);
 			}
-        }
-    }
+		}
+	}
 
-    return T;
+	return T;
 }
 
 // pre generate the solution.
@@ -52,7 +52,7 @@ constexpr std::array<uint16_t,256> f_table = pre_gen();
 
 // This is the inverse of that crypto function.
 constexpr uint16_t F_inv(uint8_t z) {
-    return f_table[z];
+	return f_table[z];
 }
 
 // This is just to make sure the pre_gen() fills entire keyspace.
@@ -86,7 +86,7 @@ std::string generate_license(std::string_view name) {
 	// These are the cryptographic constants.
 	// I have included them in hex, because it's faster for GNU MP
 	mpz_class N{"DE8EFFA50D23F5B6B9CB5BEB16BAB180309EC5787FECE557BEE7449", 16};
-    mpz_class D{"4F27D2FAD4129F18CF39E9C6523B8A2A6DB9ED972B2F38BF012EFF5", 16};
+	mpz_class D{"4F27D2FAD4129F18CF39E9C6523B8A2A6DB9ED972B2F38BF012EFF5", 16};
 
 
 	std::string hex_name = ascii_to_hex(name);
